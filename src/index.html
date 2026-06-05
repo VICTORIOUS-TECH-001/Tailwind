@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Best Fast PDF Reader</title>
+    <link rel="stylesheet" href="./output.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+   
+</head>
+<body class="bg-[#0B1120] text-[#E2E8F0] min-h-screen relative overflow-x-hidden" style="background: linear-gradient(145deg, #0B1120 0%, #0A0F1A 100%);">
+
+    <div class="app-container max-w-400 mx-auto px-5 md:px-8 py-6 relative z-10">
+        <!-- Hero Section -->
+        <div class="hero text-center mb-10 no-print">
+            <h1 class="text-[clamp(2.2rem,6vw,3.6rem)] font-extrabold tracking-tight bg-gradient-to-r from-[#FDE68A] via-[#F472B6] to-[#818CF8] bg-clip-text text-transparent">
+                <i class="fas fa-feather-alt text-[#818CF8] mr-2"></i>victorious tech institution pdf reader.
+            </h1>
+            <div class="badge inline-flex bg-white/15 backdrop-blur-md px-6 py-2 rounded-full text-sm mt-4 border border-[#818CF8]/30 gap-3 flex-wrap justify-center">
+                <span class="inline-flex items-center gap-1.5"><i class="fas fa-book-open"></i> PDF Reader</span>
+                <span class="inline-flex items-center gap-1.5"><i class="fas fa-headphones"></i> Read Aloud</span>
+                <span class="inline-flex items-center gap-1.5"><i class="fas fa-bolt"></i> Speed Reading</span>
+                <span class="inline-flex items-center gap-1.5"><i class="fas fa-microphone"></i> Record Audio Book</span>
+                <span class="inline-flex items-center gap-1.5"><i class="fas fa-save"></i> Persistent Vault</span>
+            </div>
+        </div>
+
+        <div class="main-layout grid grid-cols-1 lg:grid-cols-[1fr_0.9fr] gap-7">
+            <!-- LEFT: PDF Viewer -->
+            <div class="glass-panel bg-[#111827]/70 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl overflow-hidden transition-all duration-300 glass-hover flex flex-col min-h-[650px]">
+                <div class="pdf-toolbar flex flex-wrap justify-between items-center p-5 bg-black/40 border-b border-white/10 gap-3">
+                    <button id="uploadPdfBtn" class="upload-pdf-btn bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] border-none px-5 py-2.5 rounded-full text-white font-semibold cursor-pointer flex items-center gap-2.5 transition-all duration-200 shadow-md hover:-translate-y-0.5 hover:shadow-[#6366F1]/40"><i class="fas fa-file-pdf"></i> Open PDF</button>
+                    <div class="pdf-controls flex gap-2.5 items-center">
+                        <button id="prevPageBtn" class="pdf-nav-btn bg-[#818CF8]/20 border-none px-4 py-2 rounded-full text-white font-medium cursor-pointer backdrop-blur-sm hover:bg-[#6366F1] hover:-translate-y-0.5 transition-all"><i class="fas fa-chevron-left"></i> Prev</button>
+                        <span class="pdf-page-info text-sm bg-[#818CF8]/30 px-4 py-1.5 rounded-full font-medium" id="pageNumInfo">Page 1 / 1</span>
+                        <button id="nextPageBtn" class="pdf-nav-btn bg-[#818CF8]/20 border-none px-4 py-2 rounded-full text-white font-medium cursor-pointer backdrop-blur-sm hover:bg-[#6366F1] hover:-translate-y-0.5 transition-all">Next <i class="fas fa-chevron-right"></i></button>
+                    </div>
+                    <div><span id="pdfFileNameDisplay" class="text-xs opacity-70">📄 No PDF loaded</span></div>
+                </div>
+                <div class="pdf-canvas-container flex-1 overflow-y-auto flex justify-center p-6 bg-black/20 min-h-[550px]" id="pdfCanvasContainer">
+                    <div class="pdf-placeholder text-center py-20 px-5 text-slate-400" id="pdfPlaceholder">
+                        <i class="fas fa-book fa-3x mb-4 opacity-40"></i>
+                        <p>Upload a PDF to begin reading</p>
+                        <button id="uploadPdfBtnPlaceholder" class="upload-pdf-btn bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] border-none px-5 py-2.5 rounded-full text-white font-semibold cursor-pointer inline-flex items-center gap-2.5 mt-5 transition-all hover:-translate-y-0.5"><i class="fas fa-upload"></i> Select PDF</button>
+                    </div>
+                    <canvas id="pdfCanvas" style="display: none;"></canvas>
+                </div>
+            </div>
+
+            <!-- RIGHT PANEL -->
+            <div class="right-panel flex flex-col gap-7">
+                <div class="glass-panel bg-[#111827]/70 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl p-6">
+                    <textarea id="sourceTxt" placeholder="📖 Extracted text appears here. You can also paste any text to read..." class="w-full h-36 bg-black/40 border border-white/10 rounded-2xl p-4 text-[#E2E8F0] font-mono text-sm resize-y focus:outline-none focus:border-[#6366F1] focus:bg-black/50 transition-all"></textarea>
+
+                    <div class="reading-modes flex gap-3 flex-wrap mt-4 mb-4">
+                        <button id="readAloudBtn" class="btn-primary bg-gradient-to-r from-[#10B981] to-[#059669] text-white font-semibold py-2.5 px-5 rounded-full flex items-center gap-2.5 transition-all hover:-translate-y-0.5"><i class="fas fa-headphones"></i> Read Aloud</button>
+                        <button id="speedReadBtn" class="btn-primary bg-gradient-to-r from-[#3B82F6] to-[#2563EB] text-white font-semibold py-2.5 px-5 rounded-full flex items-center gap-2.5 transition-all hover:-translate-y-0.5"><i class="fas fa-bolt"></i> Speed Reading</button>
+                    </div>
+
+                    <div class="controls-bar flex flex-wrap gap-4 bg-black/30 rounded-[28px] p-4 my-4">
+                        <div class="ctrl flex-1 min-w-[100px]"><label class="text-[0.7rem] font-semibold text-slate-400 block mb-1.5"><i class="fas fa-tachometer-alt"></i> WPM</label><input type="range" id="wpmCtrl" min="100" max="800" step="10" value="300" class="w-full h-1.5 bg-slate-700 rounded-lg appearance-none"><span id="wpmVal" class="block text-sm mt-1">300</span></div>
+                        <div class="ctrl flex-1 min-w-[100px]"><label class="text-[0.7rem] font-semibold text-slate-400 block mb-1.5"><i class="fas fa-volume-up"></i> Speed</label><input type="range" id="rateCtrl" min="0.5" max="2" step="0.05" value="1.0" class="w-full h-1.5 bg-slate-700 rounded-lg"><span id="rateVal" class="block text-sm mt-1">1.0x</span></div>
+                        <div class="ctrl flex-1 min-w-[100px]"><label class="text-[0.7rem] font-semibold text-slate-400 block mb-1.5"><i class="fas fa-user-astronaut"></i> Voice</label><select id="voicePicker" class="w-full bg-[#1E293B] border border-white/10 rounded-full py-2 px-3 text-white text-sm"></select></div>
+                    </div>
+
+                    <div class="action-group flex gap-3 flex-wrap mt-2">
+                        <button id="saveListenVaultBtn" class="btn-secondary bg-white/10 border border-white/20 text-[#CBD5E1] py-2.5 px-5 rounded-full font-semibold cursor-pointer hover:bg-white/20 transition-all inline-flex items-center gap-2"><i class="fas fa-bookmark"></i> Save to Vault</button>
+                    </div>
+
+                    <div class="vault-header flex justify-between items-center mt-5 mb-3">
+                        <h5 class="font-semibold"><i class="fas fa-archive"></i> Listen Vault</h5>
+                        <button id="clearListenVaultBtn" class="btn-secondary bg-white/10 border border-white/20 text-[#CBD5E1] py-1.5 px-4 rounded-full text-sm hover:bg-white/20">Clear</button>
+                    </div>
+                    <div id="listenVaultList" class="listen-vault-list max-h-[180px] overflow-y-auto"></div>
+                </div>
+
+                <div class="glass-panel bg-[#111827]/70 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl p-6">
+                    <div class="vault-header flex justify-between items-center mb-4">
+                        <h4 class="font-semibold text-lg"><i class="fas fa-pen-fancy"></i> Smart Notes</h4>
+                        <button id="clearAllNotesBtn" class="btn-secondary bg-white/10 border border-white/20 text-[#CBD5E1] py-1.5 px-4 rounded-full text-sm hover:bg-white/20">Clear All</button>
+                    </div>
+                    <textarea id="noteInput" placeholder="Write a note..." class="w-full h-24 bg-black/40 border border-white/10 rounded-2xl p-3 text-[#E2E8F0] resize-y focus:outline-none focus:border-[#6366F1]"></textarea>
+                    <button id="saveNoteBtn" class="btn-primary w-full mt-3 bg-gradient-to-r from-[#10B981] to-[#059669] text-white font-semibold py-2.5 rounded-full flex items-center justify-center gap-2"><i class="fas fa-save"></i> Save Note</button>
+                    <div id="noteHistoryList" class="note-history max-h-[260px] overflow-y-auto mt-5"></div>
+                    <div class="flex gap-3 mt-4">
+                        <button id="exportPdfNotesBtn" class="btn-secondary bg-white/10 border border-white/20 text-[#CBD5E1] flex-1 py-2.5 rounded-full font-semibold hover:bg-white/20 transition-all"><i class="fas fa-file-pdf"></i> Export PDF</button>
+                        <button id="printNotesBtn" class="btn-secondary bg-white/10 border border-white/20 text-[#CBD5E1] flex-1 py-2.5 rounded-full font-semibold hover:bg-white/20 transition-all"><i class="fas fa-print"></i> Print Notes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Read Aloud Overlay -->
+    <div id="readingOverlay" class="reading-board fixed inset-0 bg-black/95 backdrop-blur-[32px] z-[1000] flex flex-col items-center justify-center hidden no-print">
+        <div class="board-content w-[85%] max-w-[1000px] bg-[#111827]/90 rounded-[48px] p-10 text-center border border-[#818CF8]/30 shadow-2xl">
+            <div id="bigWordDisplay" class="text-[clamp(2.5rem,12vw,6rem)] font-extrabold bg-gradient-to-r from-[#FDE68A] via-[#F472B6] to-[#818CF8] bg-clip-text text-transparent min-h-[160px] flex items-center justify-center mb-8">✨ Ready to read aloud</div>
+            <div class="player-progress-bar w-full h-1.5 bg-white/10 rounded-lg my-5 cursor-pointer" id="progressBarContainer"><div id="boardProgressFill" class="progress-fill w-0 h-full bg-gradient-to-r from-[#F59E0B] to-[#818CF8] rounded-lg transition-all duration-75"></div></div>
+            <div class="music-controls flex gap-4 justify-center flex-wrap my-6">
+                <div class="ctrl-circle w-[60px] h-[60px] rounded-full bg-[#818CF8]/25 border border-white/10 flex items-center justify-center text-2xl cursor-pointer" id="prevWordBtn"><i class="fas fa-backward-step"></i></div>
+                <div class="ctrl-circle w-[60px] h-[60px] rounded-full bg-[#818CF8]/25 border border-white/10 flex items-center justify-center text-2xl cursor-pointer" id="playPauseBoardBtn"><i class="fas fa-play"></i></div>
+                <div class="ctrl-circle w-[60px] h-[60px] rounded-full bg-[#818CF8]/25 border border-white/10 flex items-center justify-center text-2xl cursor-pointer" id="nextWordBtn"><i class="fas fa-forward-step"></i></div>
+                <div class="ctrl-circle w-[60px] h-[60px] rounded-full bg-[#818CF8]/25 border border-white/10 flex items-center justify-center text-2xl cursor-pointer" id="stopBoardBtn"><i class="fas fa-stop"></i></div>
+                <div class="ctrl-circle recording-btn w-[60px] h-[60px] rounded-full bg-[#EF4444]/30 border border-[#EF4444]/50 flex items-center justify-center text-2xl cursor-pointer" id="recordBoardBtn"><i class="fas fa-microphone"></i></div>
+                <div class="ctrl-circle w-[60px] h-[60px] rounded-full bg-[#818CF8]/25 border border-white/10 flex items-center justify-center text-2xl cursor-pointer" id="downloadRecordingBtn"><i class="fas fa-download"></i></div>
+            </div>
+            <div>
+                <button id="takeNoteWhileReadingBtn" class="word-nav-btn bg-[#818CF8]/20 px-6 py-2 rounded-full font-medium text-white border-none m-1 cursor-pointer"><i class="fas fa-pen"></i> Take Note</button>
+                <button id="closeBoardBtn" class="word-nav-btn bg-[#818CF8]/20 px-6 py-2 rounded-full font-medium text-white border-none m-1 cursor-pointer">Close Reader</button>
+            </div>
+            <div id="readerStatus" class="status-badge text-sm opacity-70 mt-5">Ready</div>
+            <div id="recordingStatus" class="status-badge text-sm text-[#F87171]"></div>
+        </div>
+    </div>
+
+    <!-- Speed Reading Modal -->
+    <div id="speedReadingModal" class="speed-reading-modal fixed inset-0 bg-black/96 backdrop-blur-[32px] z-[1000] flex flex-col items-center justify-center hidden no-print">
+        <div class="speed-content w-[85%] max-w-[1000px] bg-[#111827]/90 rounded-[48px] p-10 text-center border border-[#818CF8]/30 shadow-2xl">
+            <div class="speed-word-display text-[clamp(2.5rem,12vw,6rem)] font-extrabold bg-gradient-to-r from-[#FDE68A] via-[#F472B6] to-[#818CF8] bg-clip-text text-transparent min-h-[160px] flex items-center justify-center mb-8" id="speedWordDisplay">⚡ Ready</div>
+            <div class="speed-progress-bar w-full h-1.5 bg-white/10 rounded-lg my-5 cursor-pointer" id="speedProgressBar"><div class="speed-progress-fill w-0 h-full bg-gradient-to-r from-[#F59E0B] to-[#818CF8] rounded-lg" id="speedProgressFill"></div></div>
+            <div class="speed-controls flex gap-4 justify-center flex-wrap">
+                <button id="speedPlayPauseBtn" class="speed-btn bg-[#818CF8]/25 px-7 py-3 rounded-full font-semibold text-white border border-white/10 cursor-pointer"><i class="fas fa-play"></i> Start</button>
+                <button id="speedStopBtn" class="speed-btn bg-[#818CF8]/25 px-7 py-3 rounded-full font-semibold text-white border border-white/10 cursor-pointer"><i class="fas fa-stop"></i> Stop</button>
+                <button id="speedPrevBtn" class="speed-btn bg-[#818CF8]/25 px-7 py-3 rounded-full font-semibold text-white border border-white/10 cursor-pointer"><i class="fas fa-backward-step"></i> Prev</button>
+                <button id="speedNextBtn" class="speed-btn bg-[#818CF8]/25 px-7 py-3 rounded-full font-semibold text-white border border-white/10 cursor-pointer"><i class="fas fa-forward-step"></i> Next</button>
+            </div>
+            <div class="flex gap-3 justify-center mt-5">
+                <button id="decreaseWpm" class="speed-btn bg-[#818CF8]/25 px-5 py-2 rounded-full font-semibold">-50</button>
+                <span id="currentWpmDisplay" class="bg-[#1E293B] px-5 py-2 rounded-full">300 WPM</span>
+                <button id="increaseWpm" class="speed-btn bg-[#818CF8]/25 px-5 py-2 rounded-full font-semibold">+50</button>
+            </div>
+            <div class="mt-6">
+                <button id="takeNoteSpeedBtn" class="speed-btn bg-[#818CF8]/25 px-6 py-2.5 rounded-full font-semibold"><i class="fas fa-pen"></i> Take Note</button>
+                <button id="closeSpeedBtn" class="speed-btn bg-[#818CF8]/25 px-6 py-2.5 rounded-full font-semibold ml-3"><i class="fas fa-times"></i> Close</button>
+            </div>
+        </div>
+    </div>
+
+   
+    <script src="./js/app.js"></script>
+    <!-- Ensure that missing app.js does not break layout — but the conversion only concerns CSS -->
+</body>
+</html>
